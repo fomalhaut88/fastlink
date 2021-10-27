@@ -1,0 +1,10 @@
+.git
+target
+db/*
+wrk
+
+restart.sh
+.env
+.env-example
+.gitignore
+Cargo.lock
