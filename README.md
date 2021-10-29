@@ -28,6 +28,7 @@ To configure the service it is necessary to set the following environment variab
 | DB_STATE_PATH | Path to the state file, that stores the last saved index. Optional. Default `db/fastlink.state`. | `db/fastlink.state` |
 | FASTLINK_HOST | Host of the webserver. Optional. Default `127.0.0.1`. | `127.0.0.1` |
 | FASTLINK_PORT | Port of the webserver. Optional. Default `8080`. | `8080` |
+| FASTLINK_WORKERS | Number or workers. Optional. Default `1`. | `1` |
 
 The table with the correct configurations.
 

@@ -34,6 +34,8 @@ async fn main() -> std::io::Result<()> {
         .unwrap().parse::<u64>().unwrap();
     let db_generator: u64 = env::var("DB_GENERATOR")
         .unwrap().parse::<u64>().unwrap();
+    let workers: usize = env::var("FASTLINK_WORKERS")
+        .unwrap_or("1".to_string()).parse::<usize>().unwrap();
 
     // Define appstate
     let appstate = web::Data::new(AppState {
@@ -66,6 +68,7 @@ async fn main() -> std::io::Result<()> {
             .service(get)
             .service(add)
     })
+        .workers(workers)
         .bind((host, port))?
         .run()
         .await

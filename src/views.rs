@@ -35,7 +35,7 @@ async fn get(web::Path(code): web::Path<String>,
     let index = code_to_index(&code).unwrap();
 
     // Return 404 if the index in a wrong range
-    if (index == 0) || (index > appstate.prime) {
+    if index >= appstate.prime - 1 {
         return Err(ErrorNotFound(code));
     }
 
@@ -43,7 +43,7 @@ async fn get(web::Path(code): web::Path<String>,
     let url_buffer;
     {
         let db = appstate.db.lock().unwrap();
-        url_buffer = db.get(index - 1).unwrap();
+        url_buffer = db.get(index).unwrap();
     };
 
     // Return 404 if the buffer is zero
@@ -78,21 +78,21 @@ async fn add(form: web::Form<AddFormData>,
     url_buffer[..form.url.len()].copy_from_slice(form.url.as_bytes());
 
     // Save URL to the database
-    let state;
+    let index;
     {
         let mut db = appstate.db.lock().unwrap();
 
         // Save the bytes according to the current state
-        state = db.get_state();
-        db.set(state - 1, &url_buffer).unwrap();
+        index = db.get_state() - 1;
+        db.set(index, &url_buffer).unwrap();
 
         // Evolve and save the new state
         db.evolve_state();
         db.save_state().unwrap();
     };
 
-    // Build code from the DB state on URL save
-    let code = index_to_code(state, appstate.order);
+    // Build code from the DB index on URL save
+    let code = index_to_code(index, appstate.order);
 
     // Return 201 with the code in the body
     Ok(HttpResponse::Created().body(code))
